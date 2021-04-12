@@ -1,0 +1,28 @@
+body{
+    background-color: whitesmoke;
+    text-align: center;
+}
+main p{
+    font-size: 40px;
+}
+#images img{
+    text-align: center;
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    box-shadow: violet 2px 2px 2px 2px;
+    padding: 20px;
+    margin-left: 25px;
+    margin-top: 20px;
+}
+#Button button{
+    margin-top: 25px;
+    background-color: violet;
+    font-size: 20px;
+}
+
+ul li{
+    list-style-type: none;
+    text-align: left;
+    margin-left: 35%;
+}
