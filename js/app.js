@@ -13,6 +13,10 @@ let firstImageIndex;
 let secondImageIndex;
 let thirdImageIndex;
 
+let namesArr = [];
+let votesArr = [];
+let shownArr = [];
+
 function Product(name, source) {
     this.name = name;
     this.source = source;
@@ -21,6 +25,7 @@ function Product(name, source) {
 
     Product.allProducts.push(this);
 
+    namesArr.push(this.name);
 }
 Product.allProducts = [];
 
@@ -55,20 +60,27 @@ function randomIndex() {
 
 // rendering
 
+let imagesArray = [];
 function renderThreeProducts() {
     firstImageIndex = randomIndex();
     secondImageIndex = randomIndex();
     thirdImageIndex = randomIndex();
 
-    while ((firstImageIndex === secondImageIndex) || (firstImageIndex === thirdImageIndex) || (secondImageIndex === thirdImageIndex)) { 
-        if(firstImageIndex === secondImageIndex){
-            firstImageIndex = randomIndex();
-        }else if(firstImageIndex === thirdImageIndex){
+    while ((firstImageIndex === secondImageIndex) || (firstImageIndex === thirdImageIndex) || (secondImageIndex === thirdImageIndex) || imagesArray.includes(firstImageIndex) || imagesArray.includes(secondImageIndex) || imagesArray.includes(thirdImageIndex)) { 
             thirdImageIndex = randomIndex();
-        }else{
             secondImageIndex = randomIndex();
+            firstImageIndex = randomIndex();
         }
-    }
+        imagesArray = [];
+        imagesArray.push(firstImageIndex, secondImageIndex, thirdImageIndex);
+        console.log(imagesArray);
+
+    // while (imagesArray.includes(firstImageIndex) || imagesArray.includes(secondImageIndex) || imagesArray.includes(thirdImageIndex)){
+    //     firstImageIndex = randomIndex();
+    //     secondImageIndex = randomIndex();
+    //     thirdImageIndex = randomIndex();
+
+    
     firstImageElement.src = Product.allProducts[firstImageIndex].source;
     Product.allProducts[firstImageIndex].shown++;
     secondImageElement.src = Product.allProducts[secondImageIndex].source;
@@ -76,12 +88,16 @@ function renderThreeProducts() {
     thirdImageElement.src = Product.allProducts[thirdImageIndex].source;
     Product.allProducts[thirdImageIndex].shown++;
 
-
+    // imagesArray.push(firstImageElement.src, secondImageElement.src, thirdImageElement.src);
+    // console.log(imagesArray);
+    // }
 }
 renderThreeProducts();
 
-// clicking part
 
+
+
+// clicking part
 let divImagesElement = document.getElementById('images');
 divImagesElement.addEventListener('click', userClick);
 function userClick(event) {
@@ -100,6 +116,10 @@ function userClick(event) {
         } else if (event.target.id === 'thirdImg') {
             Product.allProducts[thirdImageIndex].votes++;
             renderThreeProducts();
+        }else{
+            alert('please click on the images');
+            attemptsCounter--;
+
         }
         
         // console.log(Product.allProducts[]);
@@ -111,9 +131,18 @@ function userClick(event) {
         buttonElement.appendChild(showResultsButton);
         showResultsButton.textContent= 'click here to show the results'
         showResultsButton.addEventListener('click', showResults);
+
+        for (let i=0; i< Product.allProducts.length ; i++){
+            votesArr.push(Product.allProducts[i].votes);
+            shownArr.push(Product.allProducts[i].shown);
+        }
+
+         chart();
+
+
+
+
         function showResults(event) {
-            console.log(event);
-            
             let listElement = document.createElement('ul');
             buttonElement.appendChild(listElement);
 
@@ -128,3 +157,46 @@ function userClick(event) {
 
     }
 }
+
+
+// creating the chart 
+function chart() {
+    let ctx = document.getElementById('chart').getContext('2d');
+    
+    let chart= new Chart(ctx,{
+      // what type is the chart
+     type: 'bar',
+  
+    //  the data for showing
+     data:{
+      //  for the names
+        labels: namesArr,
+        
+        datasets: [
+          {
+          label: 'Products votes',
+          data: votesArr,
+          backgroundColor: [
+            '#845460',
+          ],
+    
+          borderWidth: 1
+        },
+  
+        {
+          label: 'Products shown',
+          data: shownArr,
+          backgroundColor: [
+            '#b4a5a5',
+          ],
+    
+          borderWidth: 1
+        }
+        
+      ]
+      },
+      options: {}
+    });
+    
+  }
+  
