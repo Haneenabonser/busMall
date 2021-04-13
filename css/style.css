@@ -26,3 +26,7 @@ ul li{
     text-align: left;
     margin-left: 35%;
 }
+
+#chart{
+   margin: (25px, 25px, 25px, 25px);
+}
