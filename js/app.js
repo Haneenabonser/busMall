@@ -26,8 +26,10 @@ function Product(name, source) {
     Product.allProducts.push(this);
 
     namesArr.push(this.name);
+
 }
 Product.allProducts = [];
+
 
 new Product('bag', 'img/bag.jpg');
 new Product('banana', 'img/banana.jpg');
@@ -52,6 +54,7 @@ new Product('wine-glass', 'img/wine-glass.jpg');
 
 console.log(Product.allProducts);
 
+
 // get random index
 function randomIndex() {
     return (Math.floor(Math.random() * Product.allProducts.length));
@@ -66,33 +69,36 @@ function renderThreeProducts() {
     secondImageIndex = randomIndex();
     thirdImageIndex = randomIndex();
 
-    while ((firstImageIndex === secondImageIndex) || (firstImageIndex === thirdImageIndex) || (secondImageIndex === thirdImageIndex) || imagesArray.includes(firstImageIndex) || imagesArray.includes(secondImageIndex) || imagesArray.includes(thirdImageIndex)) { 
-            thirdImageIndex = randomIndex();
-            secondImageIndex = randomIndex();
-            firstImageIndex = randomIndex();
-        }
-        imagesArray = [];
-        imagesArray.push(firstImageIndex, secondImageIndex, thirdImageIndex);
-        console.log(imagesArray);
+    while ((firstImageIndex === secondImageIndex) || (firstImageIndex === thirdImageIndex) || (secondImageIndex === thirdImageIndex) || imagesArray.includes(firstImageIndex) || imagesArray.includes(secondImageIndex) || imagesArray.includes(thirdImageIndex)) {
+        thirdImageIndex = randomIndex();
+        secondImageIndex = randomIndex();
+        firstImageIndex = randomIndex();
+    }
+    imagesArray = [];
+    imagesArray.push(firstImageIndex, secondImageIndex, thirdImageIndex);
+    console.log(imagesArray);
 
     // while (imagesArray.includes(firstImageIndex) || imagesArray.includes(secondImageIndex) || imagesArray.includes(thirdImageIndex)){
     //     firstImageIndex = randomIndex();
     //     secondImageIndex = randomIndex();
     //     thirdImageIndex = randomIndex();
 
-    
+
     firstImageElement.src = Product.allProducts[firstImageIndex].source;
     Product.allProducts[firstImageIndex].shown++;
+    dataStorage();
     secondImageElement.src = Product.allProducts[secondImageIndex].source;
     Product.allProducts[secondImageIndex].shown++;
+    dataStorage();
     thirdImageElement.src = Product.allProducts[thirdImageIndex].source;
     Product.allProducts[thirdImageIndex].shown++;
+    dataStorage();
 
     // imagesArray.push(firstImageElement.src, secondImageElement.src, thirdImageElement.src);
     // console.log(imagesArray);
     // }
 }
-renderThreeProducts();
+// renderThreeProducts();
 
 
 
@@ -116,28 +122,28 @@ function userClick(event) {
         } else if (event.target.id === 'thirdImg') {
             Product.allProducts[thirdImageIndex].votes++;
             renderThreeProducts();
-        }else{
+        } else {
             alert('please click on the images');
             attemptsCounter--;
 
         }
-        
+
         // console.log(Product.allProducts[]);
-        
+
     } else {
         divImagesElement.removeEventListener('click', userClick);
         let buttonElement = document.getElementById('Button')
         let showResultsButton = document.createElement('Button');
         buttonElement.appendChild(showResultsButton);
-        showResultsButton.textContent= 'click here to show the results'
+        showResultsButton.textContent = 'click here to show the results'
         showResultsButton.addEventListener('click', showResults);
 
-        for (let i=0; i< Product.allProducts.length ; i++){
+        for (let i = 0; i < Product.allProducts.length; i++) {
             votesArr.push(Product.allProducts[i].votes);
             shownArr.push(Product.allProducts[i].shown);
         }
 
-         chart();
+        chart();
 
 
 
@@ -146,13 +152,13 @@ function userClick(event) {
             let listElement = document.createElement('ul');
             buttonElement.appendChild(listElement);
 
-            for ( let i=0 ; i< Product.allProducts.length ; i++){
+            for (let i = 0; i < Product.allProducts.length; i++) {
                 let resultElement = document.createElement('li');
                 listElement.appendChild(resultElement);
                 resultElement.textContent = `${Product.allProducts[i].name} had ${Product.allProducts[i].votes} votes, and was seen ${Product.allProducts[i].shown} times`;
             }
             showResultsButton.removeEventListener('click', showResults);
- 
+
         }
 
     }
@@ -162,41 +168,60 @@ function userClick(event) {
 // creating the chart 
 function chart() {
     let ctx = document.getElementById('chart').getContext('2d');
-    
-    let chart= new Chart(ctx,{
-      // what type is the chart
-     type: 'bar',
-  
-    //  the data for showing
-     data:{
-      //  for the names
-        labels: namesArr,
-        
-        datasets: [
-          {
-          label: 'Products votes',
-          data: votesArr,
-          backgroundColor: [
-            '#845460',
-          ],
-    
-          borderWidth: 1
+
+    let chart = new Chart(ctx, {
+        // what type is the chart
+        type: 'bar',
+
+        //  the data for showing
+        data: {
+            //  for the names
+            labels: namesArr,
+
+            datasets: [
+                {
+                    label: 'Products votes',
+                    data: votesArr,
+                    backgroundColor: [
+                        '#845460',
+                    ],
+
+                    borderWidth: 1
+                },
+
+                {
+                    label: 'Products shown',
+                    data: shownArr,
+                    backgroundColor: [
+                        '#b4a5a5',
+                    ],
+
+                    borderWidth: 1
+                }
+
+            ]
         },
-  
-        {
-          label: 'Products shown',
-          data: shownArr,
-          backgroundColor: [
-            '#b4a5a5',
-          ],
-    
-          borderWidth: 1
-        }
-        
-      ]
-      },
-      options: {}
+        options: {}
     });
-    
-  }
-  
+
+}
+
+
+// adding to local storage:
+function dataStorage() {
+    let dataStored = JSON.stringify(Product.allProducts);
+    // console.log(dataStored);
+    localStorage.setItem('product', dataStored);
+}
+
+
+// getting data from local storage:
+function gettingData() {
+    let getData = localStorage.getItem('product');
+    // console.log(getData);
+    if (getData !== null) {
+        Product.allProducts = JSON.parse(getData);
+    }
+    renderThreeProducts();
+}
+gettingData();
